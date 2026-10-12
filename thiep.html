@@ -2032,6 +2032,82 @@
       transform: translateY(-1px);
     }
 
+    .parking-guide-trigger {
+      margin-left: auto;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--accent-cyan);
+      font: inherit;
+      font-size: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .parking-guide-trigger:hover {
+      text-decoration: underline;
+    }
+
+    .parking-guide {
+      position: fixed;
+      inset: 0;
+      z-index: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(3, 7, 17, 0.84);
+      backdrop-filter: blur(8px);
+    }
+
+    .parking-guide[hidden] {
+      display: none;
+    }
+
+    .parking-guide-panel {
+      width: min(760px, 100%);
+      max-height: 90vh;
+      overflow: auto;
+      padding: 18px;
+      border: 1px solid rgba(var(--accent-cyan-rgb), 0.5);
+      border-radius: 12px;
+      background: #08111f;
+      box-shadow: 0 20px 70px rgba(0, 0, 0, 0.55), var(--neon-glow);
+    }
+
+    .parking-guide-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .parking-guide-title {
+      color: var(--accent-cyan);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+    }
+
+    .parking-guide-image {
+      display: block;
+      width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .parking-guide-fallback {
+      padding: 24px 12px;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      text-align: center;
+    }
+
     .terminal-line {
       word-break: break-word;
       line-height: 1.5;
@@ -2877,6 +2953,59 @@
       border: 1px solid #c8a45d !important;
     }
 
+    .parking-guide {
+      padding: 16px !important;
+      background: rgba(15, 12, 7, 0.72) !important;
+    }
+
+    .parking-guide-panel {
+      width: min(900px, calc(100vw - 32px)) !important;
+      max-height: 92vh !important;
+      max-height: 92dvh !important;
+      padding: clamp(16px, 3vw, 26px) !important;
+      border: 1px solid rgba(138, 100, 18, 0.35) !important;
+      border-radius: 14px !important;
+      background: #fffdf7 !important;
+      color: #493817 !important;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35) !important;
+    }
+
+    .parking-guide-head {
+      margin-bottom: 10px !important;
+    }
+
+    .parking-guide-title {
+      color: #76520b !important;
+      font-size: clamp(1.15rem, 4vw, 1.45rem) !important;
+      line-height: 1.25;
+    }
+
+    .parking-guide-description {
+      margin: 0 0 14px;
+      color: #493817 !important;
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    .parking-guide-image {
+      max-height: calc(92vh - 120px) !important;
+      max-height: calc(92dvh - 120px) !important;
+      border: 1px solid rgba(138, 100, 18, 0.2);
+      background: #ffffff !important;
+    }
+
+    .parking-guide-fallback {
+      color: #493817 !important;
+      line-height: 1.6;
+    }
+
+    .parking-guide .terminal-btn.secondary {
+      flex-shrink: 0;
+      border: 1px solid #c8a45d !important;
+      background: #ffffff !important;
+      color: #6f5625 !important;
+    }
+
     /* Readability pass: warm ivory card with high-contrast gold/ink text */
     .card {
       background: #fffdf7;
@@ -3285,8 +3414,10 @@
                       d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                   Địa điểm <span
-                    style="font-size: 0.65rem; color: var(--accent-cyan); margin-left: auto; letter-spacing: 0.04em;">[SAO
+                    style="font-size: 0.65rem; color: var(--accent-cyan); letter-spacing: 0.04em;">[SAO
                     CHÉP]</span>
+                  <button type="button" class="parking-guide-trigger" onclick="openParkingGuide(event)"
+                    title="Xem hướng dẫn gửi xe">[HƯỚNG DẪN GỬI XE]</button>
                 </div>
                 <div class="value">Thu Duc Campus: Khu Công nghệ cao TP.HCM, Xa lộ Hà Nội, Phường Tăng Nhơn Phú, TP.HCM
                 </div>
@@ -3478,6 +3609,24 @@
         <button type="button" class="terminal-btn" id="rsvpGuideAction" onclick="goToRSVP()">Đến phần nhập</button>
         <button type="button" class="terminal-btn secondary" onclick="closeRSVPGuide()">Đóng</button>
       </div>
+    </section>
+  </div>
+
+  <div class="parking-guide" id="parkingGuide" hidden onclick="if (event.target === this) closeParkingGuide()">
+    <section class="parking-guide-panel" role="dialog" aria-modal="true" aria-labelledby="parkingGuideTitle">
+      <div class="parking-guide-head">
+        <h2 class="parking-guide-title" id="parkingGuideTitle">Hướng dẫn gửi xe</h2>
+        <button type="button" class="terminal-btn secondary" onclick="closeParkingGuide()">Đóng</button>
+      </div>
+      <p class="parking-guide-description">
+        Dưới đây là sơ đồ hướng dẫn gửi xe:
+      </p>
+      <img class="parking-guide-image" src="assets/xe.jpg" alt="Sơ đồ hướng dẫn gửi xe"
+        onerror="this.hidden = true; document.getElementById('parkingGuideFallback').hidden = false;">
+      <p class="parking-guide-fallback" id="parkingGuideFallback" hidden>
+        Chưa có ảnh hướng dẫn. Thêm ảnh vào thư mục <strong>assets</strong> với tên
+        <strong>xe.jpg</strong> để hiển thị tại đây.
+      </p>
     </section>
   </div>
 
@@ -4711,6 +4860,20 @@
         showToast("📍 Địa chỉ: HUTECH Cơ sở Thủ Đức - Khu CNC TP.HCM");
       }
     }
+
+    function openParkingGuide(event) {
+      event.stopPropagation();
+      const guide = document.getElementById('parkingGuide');
+      guide.hidden = false;
+    }
+
+    function closeParkingGuide() {
+      document.getElementById('parkingGuide').hidden = true;
+    }
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeParkingGuide();
+    });
 
     function copyPhone(event) {
       if (event && event.stopPropagation) event.stopPropagation();

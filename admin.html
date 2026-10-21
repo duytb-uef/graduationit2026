@@ -2022,17 +2022,58 @@
   <style id="memory-album-style">
     .memory-album {
       margin: 18px 0 22px;
-      padding: 18px;
+      padding: 0;
+      overflow: hidden;
       border: 1px solid rgba(200, 164, 93, .38);
       border-radius: 18px;
       background: linear-gradient(145deg, #fffdf7, #f5ecd9);
       color: #493817
     }
 
-    .memory-album h2 {
-      margin: 0 0 5px;
+    .memory-album-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      cursor: pointer;
+      list-style: none
+    }
+
+    .memory-album-summary::-webkit-details-marker {
+      display: none
+    }
+
+    .memory-album-summary::after {
+      flex: none;
       color: #805b10;
-      font-family: "Fraunces", Georgia, serif
+      content: "+";
+      font-size: 1.25rem;
+      line-height: 1
+    }
+
+    .memory-album[open] .memory-album-summary::after {
+      content: "−"
+    }
+
+    .memory-album-title {
+      display: block;
+      color: #805b10;
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 1.15rem;
+      font-weight: 600
+    }
+
+    .memory-album-description {
+      display: block;
+      margin-top: 4px;
+      color: #725d35;
+      font-size: .82rem;
+      line-height: 1.45
+    }
+
+    .memory-album-content {
+      padding: 0 18px 18px
     }
 
     .memory-album p {
@@ -2154,6 +2195,14 @@
     }
 
     @media (max-width: 600px) {
+      .memory-album-summary {
+        padding: 14px
+      }
+
+      .memory-album-content {
+        padding: 0 14px 14px
+      }
+
       .memory-album-preview:not(.expanded) .memory-album-page:nth-child(n + 3) {
         display: none
       }
@@ -2270,27 +2319,33 @@
       <button type="button" class="btn-danger-outline" id="deleteAllBtn" onclick="deleteAllGuests()">🗑 Xóa tất
         cả</button>
     </div>
-    <section class="memory-album" id="memoryAlbum">
-      <h2>✦ Graduation Memory Album </h2>
-      <p>Tạo album lưu giữ lời chúc của tất cả khách mời · HUTECH 2026</p>
-      <div class="memory-album-controls">
-        <label for="albumPerPage">Số lời chúc mỗi trang</label>
-        <select id="albumPerPage" onchange="buildMemoryAlbum()">
-          <option value="4">4 – chữ lớn</option>
-          <option value="6" selected>6 – cân đối</option>
-          <option value="8">8 – gọn hơn</option>
-        </select>
-        <button type="button" class="btn-primary" onclick="buildMemoryAlbum()">✦ Tạo / cập nhật xem trước</button>
-        <button type="button" class="btn-ghost" onclick="downloadMemoryAlbum()">⬇ Tải toàn bộ PNG (ZIP)</button>
+    <details class="memory-album" id="memoryAlbum">
+      <summary class="memory-album-summary">
+        <span>
+          <span class="memory-album-title">✦ Graduation Memory Album</span>
+          <span class="memory-album-description">Tạo album lưu giữ lời chúc của tất cả khách mời</span>
+        </span>
+      </summary>
+      <div class="memory-album-content">
+        <div class="memory-album-controls">
+          <label for="albumPerPage">Số lời chúc mỗi trang</label>
+          <select id="albumPerPage" onchange="buildMemoryAlbum()">
+            <option value="4">4 – chữ lớn</option>
+            <option value="6" selected>6 – cân đối</option>
+            <option value="8">8 – gọn hơn</option>
+          </select>
+          <button type="button" class="btn-primary" onclick="buildMemoryAlbum()">✦ Tạo / cập nhật xem trước</button>
+          <button type="button" class="btn-ghost" onclick="downloadMemoryAlbum()">⬇ Tải toàn bộ PNG (ZIP)</button>
+        </div>
+        <button type="button" class="btn-ghost memory-album-toggle" id="memoryAlbumToggle"
+          aria-controls="memoryAlbumPreview" aria-expanded="false" onclick="toggleMemoryAlbumPreview()">Hiện đầy đủ
+          album</button>
+        <div class="memory-album-preview" id="memoryAlbumPreview">
+          <div class="empty">Nhấn “Tạo / cập nhật xem trước” sau khi tải danh sách khách.</div>
+        </div>
+        <p class="memory-album-note">Album gồm bìa, các trang lời chúc tự chia trang và trang cảm ơn.</p>
       </div>
-      <button type="button" class="btn-ghost memory-album-toggle" id="memoryAlbumToggle"
-        aria-controls="memoryAlbumPreview" aria-expanded="false" onclick="toggleMemoryAlbumPreview()">Hiện đầy đủ
-        album</button>
-      <div class="memory-album-preview" id="memoryAlbumPreview">
-        <div class="empty">Nhấn “Tạo / cập nhật xem trước” sau khi tải danh sách khách.</div>
-      </div>
-      <p class="memory-album-note">Album gồm bìa, các trang lời chúc tự chia trang và trang cảm ơn.</p>
-    </section>
+    </details>
     <div class="table-wrap">
       <table>
         <thead>
@@ -2539,7 +2594,7 @@
             <td>${new Date(guest.created_at).toLocaleString('vi-VN')}</td>
             <td>
               <button class="preview-button" type="button" onclick="openTicketPreviewByIndex(${index})">🎟️ Card</button>
-              <button class="wish-edit-button" type="button" onclick="openWishEditor('${escapeHtml(guest.id)}')">Sửa lời chúc</button>
+              <button class="wish-edit-button" type="button" onclick="openWishEditor('${escapeHtml(guest.id)}')">Sửa</button>
               <button class="delete-button" type="button" onclick="deleteGuest('${guest.id}')">Xóa</button>
             </td>
           </tr>

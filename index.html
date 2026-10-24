@@ -13,6 +13,14 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@600;700&display=swap"
     rel="stylesheet">
   <style>
+    @font-face {
+      font-family: 'FZ Jaapokki Enhance';
+      src: url('assets/fonts/Fz-Jaapokki-Enchance.otf') format('opentype');
+      font-style: normal;
+      font-weight: 400 700;
+      font-display: swap;
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -27,7 +35,7 @@
     body {
       background: #ffffff;
       color: #a67c00;
-      font-family: 'Inter', sans-serif;
+      font-family: 'FZ Jaapokki Enhance', 'Inter', sans-serif;
       min-height: 100%;
       min-height: 100dvh;
       display: flex;
@@ -309,6 +317,39 @@
       animation: fadeUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
     }
 
+    #pointer-glow {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(440px circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+          rgba(255, 244, 190, .42), rgba(240, 210, 100, .12) 38%, transparent 72%);
+      transition: opacity .45s ease;
+    }
+
+    #pointer-glow.is-active {
+      opacity: .9;
+    }
+
+    .content.is-opening {
+      animation: invitationLaunch .66s cubic-bezier(.22, .75, .25, 1) forwards;
+      pointer-events: none;
+    }
+
+    @keyframes invitationLaunch {
+      35% {
+        opacity: 1;
+        transform: translateY(-6px) scale(1.025);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-24px) scale(1.07) rotateX(5deg);
+        filter: blur(7px);
+      }
+    }
+
     @keyframes fadeUp {
       to {
         opacity: 1;
@@ -446,9 +487,13 @@
     }
 
     h1 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(2rem, 7vw, 2.8rem);
+      font-family: 'FZ Jaapokki Enhance', 'Space Grotesk', sans-serif;
+      text-transform: uppercase;
+      white-space: nowrap;
+      font-size: clamp(1.15rem, 5.4vw, 2.8rem);
       font-weight: 700;
+      line-height: 1.4;
+      padding-top: 0.12em;
       margin-bottom: 0.7rem;
       background: linear-gradient(110deg, #a67c00 20%, #d4af37 40%, #f0d264 60%, #b8860b 80%, #a67c00 100%);
       background-size: 300% auto;
@@ -487,6 +532,7 @@
     }
 
     p.sub {
+      text-transform: uppercase;
       color: #b38a12;
       font-size: 1.02rem;
       font-weight: 700;
@@ -710,8 +756,208 @@
     #confetti-canvas {
       position: fixed;
       inset: 0;
-      z-index: 100;
+      z-index: 120;
       pointer-events: none !important;
+    }
+
+    .launch-burst {
+      position: fixed;
+      z-index: 121;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(255, 255, 255, .96) 0 5%, rgba(240, 210, 100, .8) 18%, rgba(212, 175, 55, .28) 45%, transparent 72%);
+      transform: translate(-50%, -50%) scale(.1);
+      animation: launchBurst .72s cubic-bezier(.16, .72, .22, 1) forwards;
+    }
+
+    @keyframes launchBurst {
+      70% {
+        opacity: .85;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(var(--burst-scale, 78));
+      }
+    }
+
+    .envelope-transition {
+      position: fixed;
+      inset: 0;
+      z-index: 110;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 50% 54%, rgba(255, 255, 255, .98), rgba(255, 250, 232, .97) 45%, rgba(244, 226, 177, .92));
+      transition: opacity .3s ease, visibility .3s ease;
+      perspective: 1100px;
+    }
+
+    .envelope-transition.is-active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .envelope-scene {
+      position: relative;
+      width: min(320px, 78vw);
+      height: 214px;
+      transform: translateY(22px) scale(.78) rotateX(9deg);
+      opacity: 0;
+    }
+
+    .envelope-transition.is-active .envelope-scene {
+      animation: envelopeArrive .56s cubic-bezier(.18, .82, .24, 1) forwards;
+    }
+
+    .envelope-back {
+      position: absolute;
+      inset: 14px 0 0;
+      border: 1px solid rgba(166, 124, 0, .38);
+      border-radius: 15px;
+      background: linear-gradient(145deg, #f9e8ad, #e5c66b);
+      box-shadow: 0 28px 70px rgba(139, 101, 0, .24), inset 0 1px 0 rgba(255, 255, 255, .78);
+    }
+
+    .envelope-letter {
+      position: absolute;
+      z-index: 2;
+      left: 12%;
+      right: 12%;
+      bottom: 18px;
+      height: 168px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      border: 1px solid rgba(166, 124, 0, .18);
+      border-radius: 10px;
+      color: #886400;
+      background: linear-gradient(160deg, #fffef9, #fff5d8);
+      box-shadow: 0 6px 22px rgba(116, 81, 0, .14);
+      transform: translateY(58px) scale(.94);
+      opacity: 0;
+    }
+
+    .envelope-letter-cap {
+      font: 600 9px/1 'JetBrains Mono', monospace;
+      letter-spacing: .2em;
+    }
+
+    .envelope-letter-icon {
+      font-size: 38px;
+      filter: drop-shadow(0 5px 9px rgba(166, 124, 0, .24));
+    }
+
+    .envelope-transition.is-active .envelope-letter {
+      animation: letterRise .88s cubic-bezier(.18, .82, .24, 1) .32s forwards;
+    }
+
+    .envelope-front {
+      position: absolute;
+      z-index: 4;
+      inset: 14px 0 0;
+      border-radius: 0 0 15px 15px;
+      background: linear-gradient(155deg, #f1d786, #d7b34f);
+      clip-path: polygon(0 0, 50% 57%, 100% 0, 100% 100%, 0 100%);
+      filter: drop-shadow(0 8px 8px rgba(139, 101, 0, .12));
+    }
+
+    .envelope-flap {
+      position: absolute;
+      z-index: 5;
+      inset: 14px 0 auto;
+      height: 124px;
+      border-radius: 15px 15px 0 0;
+      background: linear-gradient(160deg, #f7e5a6, #dfc064);
+      clip-path: polygon(0 0, 100% 0, 50% 78%);
+      transform: rotateX(0deg);
+      transform-origin: 50% 0;
+      backface-visibility: hidden;
+    }
+
+    .envelope-transition.is-active .envelope-flap {
+      animation: envelopeOpen .72s cubic-bezier(.4, 0, .2, 1) .28s forwards;
+    }
+
+    .envelope-seal {
+      position: absolute;
+      z-index: 6;
+      top: 91px;
+      left: 50%;
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 248, 218, .8);
+      border-radius: 50%;
+      color: #fff9e7;
+      background: radial-gradient(circle at 35% 30%, #f6e29a, #b8860b 72%);
+      box-shadow: 0 5px 16px rgba(111, 78, 0, .26), inset 0 1px 3px rgba(255, 255, 255, .55);
+      font-size: 17px;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .envelope-transition.is-active .envelope-seal {
+      animation: sealRelease .34s ease .34s forwards;
+    }
+
+    .envelope-caption {
+      position: absolute;
+      top: calc(100% + 26px);
+      left: 0;
+      width: 100%;
+      color: #8a6500;
+      font: 600 10px/1 'JetBrains Mono', monospace;
+      letter-spacing: .24em;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    .envelope-transition.is-active .envelope-caption {
+      animation: captionArrive .5s ease .72s forwards;
+    }
+
+    @keyframes envelopeArrive {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateX(0);
+      }
+    }
+
+    @keyframes envelopeOpen {
+      to {
+        transform: rotateX(-180deg);
+      }
+    }
+
+    @keyframes letterRise {
+      to {
+        opacity: 1;
+        transform: translateY(-44px) scale(1);
+      }
+    }
+
+    @keyframes sealRelease {
+      to {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(.25) rotate(24deg);
+      }
+    }
+
+    @keyframes captionArrive {
+      to {
+        opacity: .82;
+        transform: translateY(0);
+      }
     }
 
     #matrix-canvas {
@@ -879,6 +1125,27 @@
       color: #a67c00;
       text-shadow: 0 0 12px rgba(212, 175, 55, .35);
       font-variant-numeric: tabular-nums;
+      transform-origin: center;
+    }
+
+    .cd-cell.is-changing .cd-num {
+      animation: countdownTick .28s cubic-bezier(.2, .8, .2, 1);
+    }
+
+    @keyframes countdownTick {
+      0% {
+        opacity: .45;
+        transform: translateY(5px) scale(.88);
+      }
+
+      65% {
+        opacity: 1;
+        transform: translateY(-2px) scale(1.08);
+      }
+
+      100% {
+        transform: translateY(0) scale(1);
+      }
     }
 
     .cd-cell .cd-label {
@@ -944,7 +1211,15 @@
       .boot-log,
       .grain,
       #boot-bar,
-      .countdown {
+      .countdown,
+      .cd-cell.is-changing .cd-num,
+      .launch-burst,
+      .ripple,
+      .envelope-scene,
+      .envelope-letter,
+      .envelope-flap,
+      .envelope-seal,
+      .envelope-caption {
         animation: none !important;
       }
 
@@ -960,6 +1235,18 @@
 
       .open-btn {
         transition: none;
+      }
+
+      #pointer-glow {
+        display: none;
+      }
+
+      .envelope-transition {
+        display: none !important;
+      }
+
+      .content.is-opening {
+        animation: none !important;
       }
 
       .cursor,
@@ -1196,6 +1483,13 @@
         opacity: 0;
       }
     }
+
+    /* Giữ FZ Jaapokki trên toàn trang, chừa khoảng cao cho dấu tiếng Việt */
+    body,
+    body * {
+      font-family: 'FZ Jaapokki Enhance', 'Inter', sans-serif !important;
+    }
+
   </style>
 </head>
 
@@ -1209,8 +1503,23 @@
   <div class="grain" aria-hidden="true"></div>
   <div class="particles" id="particles" aria-hidden="true"></div>
   <div class="sparkles" id="sparkles" aria-hidden="true"></div>
+  <div id="pointer-glow" aria-hidden="true"></div>
   <canvas id="matrix-canvas" aria-hidden="true"></canvas>
   <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+  <div class="envelope-transition" id="envelopeTransition" aria-hidden="true">
+    <div class="envelope-scene">
+      <div class="envelope-back"></div>
+      <div class="envelope-letter">
+        <span class="envelope-letter-cap">TRÂN TRỌNG KÍNH MỜI</span>
+        <span class="envelope-letter-cap">LỄ TỐT NGHIỆP · 2026</span>
+        <span class="envelope-letter-icon">🎓</span>
+      </div>
+      <div class="envelope-front"></div>
+      <div class="envelope-flap"></div>
+      <div class="envelope-seal" aria-hidden="true">✦</div>
+      <div class="envelope-caption">MỘT CỘT MỐC · MỘT LỜI MỜI</div>
+    </div>
+  </div>
 
   <div class="cursor" id="cursor" aria-hidden="true"></div>
   <div class="cursor-follower" id="cursorFollower" aria-hidden="true"></div>
@@ -1259,8 +1568,19 @@
 
   <script>
     const isFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const pointerGlow = document.getElementById('pointer-glow');
     const cursor = document.getElementById('cursor');
     const follower = document.getElementById('cursorFollower');
+
+    if (isFinePointer && !prefersReducedMotion) {
+      document.addEventListener('pointermove', (event) => {
+        pointerGlow.style.setProperty('--pointer-x', event.clientX + 'px');
+        pointerGlow.style.setProperty('--pointer-y', event.clientY + 'px');
+        pointerGlow.classList.add('is-active');
+      });
+      document.addEventListener('pointerleave', () => pointerGlow.classList.remove('is-active'));
+    }
 
     if (isFinePointer) {
       let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
@@ -1289,19 +1609,36 @@
     const cdD = document.getElementById('cdD'), cdH = document.getElementById('cdH'),
       cdM = document.getElementById('cdM'), cdS = document.getElementById('cdS');
     function pad(n) { return String(n).padStart(2, '0'); }
+    function updateCountdownValue(element, value) {
+      if (element.textContent === value) return;
+      const cell = element.closest('.cd-cell');
+      element.textContent = value;
+      if (cell && !prefersReducedMotion) {
+        cell.classList.remove('is-changing');
+        void cell.offsetWidth;
+        cell.classList.add('is-changing');
+        setTimeout(() => cell.classList.remove('is-changing'), 320);
+      }
+    }
     function tickCountdown() {
       const diff = CEREMONY_DATE - new Date();
-      if (diff <= 0) { cdD.textContent = cdH.textContent = cdM.textContent = cdS.textContent = '00'; return; }
+      if (diff <= 0) {
+        [cdD, cdH, cdM, cdS].forEach(element => updateCountdownValue(element, '00'));
+        return;
+      }
       const d = Math.floor(diff / 86400000);
       const h = Math.floor(diff % 86400000 / 3600000);
       const m = Math.floor(diff % 3600000 / 60000);
       const s = Math.floor(diff % 60000 / 1000);
-      cdD.textContent = pad(d); cdH.textContent = pad(h); cdM.textContent = pad(m); cdS.textContent = pad(s);
+      updateCountdownValue(cdD, pad(d));
+      updateCountdownValue(cdH, pad(h));
+      updateCountdownValue(cdM, pad(m));
+      updateCountdownValue(cdS, pad(s));
     }
     tickCountdown();
     setInterval(tickCountdown, 1000);
 
-    if (isFinePointer && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (isFinePointer && !prefersReducedMotion) {
       const contentEl = document.querySelector('.content');
       const btnWrap = document.querySelector('.btn-wrap');
       let tx = 0, ty = 0, ctx2 = 0, cty = 0;
@@ -1395,7 +1732,7 @@
       }
       requestAnimationFrame(drawMatrix);
     }
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(drawMatrix);
+    if (!prefersReducedMotion) requestAnimationFrame(drawMatrix);
     document.addEventListener('visibilitychange', () => { matrixPaused = document.hidden; });
 
     const subHTML = 'Lễ tốt nghiệp Kỹ sư <span>CNTT</span> — <a class="name-link" href="https://tranbaoduy.netlify.app/" target="_self">Trần Bảo Duy</a><br><span>11/2026</span>';
@@ -1428,14 +1765,14 @@
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    function createConfetti() {
+    function createConfetti(originX = canvas.width / 2, originY = canvas.height / 2) {
       confetti = [];
       const colors = ['#d4af37', '#f0d264', '#b8860b', '#c9a227', '#e6c35c', '#a67c00'];
       const shapes = ['rect', 'circle', 'ribbon'];
       for (let i = 0; i < 140; i++) {
         confetti.push({
-          x: canvas.width / 2 + (Math.random() - 0.5) * 80,
-          y: canvas.height / 2,
+          x: originX + (Math.random() - 0.5) * 80,
+          y: originY,
           vx: (Math.random() - 0.5) * 18,
           vy: Math.random() * -14 - 6,
           size: Math.random() * 8 + 3,
@@ -1505,9 +1842,25 @@
       const openBtn = document.getElementById('openBtn');
       if (openBtn.disabled) return;
 
-      createRipple(e);
-      createConfetti();
       openBtn.disabled = true;
+      document.querySelector('.content').classList.add('is-opening');
+      if (!prefersReducedMotion) {
+        const envelope = document.getElementById('envelopeTransition');
+        envelope.classList.add('is-active');
+        createRipple(e);
+        const bounds = openBtn.getBoundingClientRect();
+        const originX = Number.isFinite(e.clientX) ? e.clientX : bounds.left + bounds.width / 2;
+        const originY = Number.isFinite(e.clientY) ? e.clientY : bounds.top + bounds.height / 2;
+        createConfetti(originX, originY);
+        const burst = document.createElement('span');
+        burst.className = 'launch-burst';
+        burst.setAttribute('aria-hidden', 'true');
+        burst.style.left = originX + 'px';
+        burst.style.top = originY + 'px';
+        burst.style.setProperty('--burst-scale', String(Math.hypot(innerWidth, innerHeight) / 9));
+        document.body.appendChild(burst);
+        setTimeout(() => burst.remove(), 800);
+      }
 
       try {
         sessionStorage.setItem('startInvitationMusic', '1');
@@ -1515,7 +1868,7 @@
 
       setTimeout(() => {
         window.location.href = 'thiep.html';
-      }, 700);
+      }, prefersReducedMotion ? 0 : 1700);
     }
 
     document.getElementById('openBtn').addEventListener('click', openInvitation);

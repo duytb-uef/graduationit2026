@@ -15,6 +15,14 @@
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="guest-db.js"></script>
   <style>
+    @font-face {
+      font-family: 'FZ Jaapokki Enhance';
+      src: url('assets/fonts/Fz-Jaapokki-Enchance.otf') format('opentype');
+      font-style: normal;
+      font-weight: 400 700;
+      font-display: swap;
+    }
+
     :root {
       --bg-void: #070604;
       --bg-card: rgba(18, 15, 9, 0.96);
@@ -2611,7 +2619,6 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-
       #matrixCanvas,
       .screen-flash.fire,
       body.hacker-shake,
@@ -2953,6 +2960,20 @@
       background: #c8a45d;
       border-color: #c8a45d;
       color: #ffffff;
+      font-family: 'FZ Jaapokki Enhance', sans-serif !important;
+      text-transform: uppercase !important;
+    }
+
+    /* Đồng bộ font FZ Jaapokki và chữ in hoa cho nội dung các hộp thoại */
+    .rsvp-guide-panel,
+    .rsvp-guide-panel *,
+    .parking-guide-panel,
+    .parking-guide-panel *,
+    .thank-you-dialog,
+    .thank-you-dialog *,
+    .ticket-preview-close {
+      font-family: 'FZ Jaapokki Enhance', sans-serif !important;
+      text-transform: uppercase !important;
     }
 
     .ticket-template-edit:hover {
@@ -3010,15 +3031,7 @@
       border-color: rgba(138, 100, 18, 0.3) !important;
     }
 
-    #terminalConfirmBox {
-      background: #fff8e8 !important;
-      border-color: rgba(138, 100, 18, 0.4) !important;
-    }
-
-    #terminalConfirmBox .terminal-line,
-    #terminalConfirmBox .terminal-line[style],
-    #terminalStatusPrompt,
-    #confirmGuestNameText {
+    #terminalStatusPrompt {
       color: #493817 !important;
       -webkit-text-fill-color: #493817 !important;
       opacity: 1 !important;
@@ -3312,6 +3325,7 @@
     .card .corner-sash .faculty,
     .card .corner-sash .sep {
       color: #493817;
+      font-family: 'FZ Jaapokki Enhance', sans-serif !important;
     }
 
     .card .qr-caption {
@@ -3333,6 +3347,49 @@
     .card .action-btn:hover {
       background: #5f4108;
       color: #fffdf7;
+    }
+
+    /* FZ Jaapokki cho các dòng được chọn trên thiệp */
+    #secretTapZone,
+    .card .tag-pill,
+    .card .school-line strong {
+      font-family: 'FZ Jaapokki Enhance', sans-serif !important;
+    }
+
+    #secretTapZone {
+      text-transform: uppercase;
+      font-size: calc(1em + 2px) !important;
+    }
+
+    .card .school-line {
+      width: 100%;
+      text-align: center !important;
+      margin-inline: auto;
+    }
+
+    .card .school-line strong {
+      display: inline-block;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    /* Đồng bộ FZ Jaapokki và chữ in hoa cho các thông tin/phần điều khiển phía dưới thiệp */
+    .card .countdown-label,
+    .card .countdown-unit,
+    .card .countdown-unit *,
+    .card .info-chip,
+    .card .info-chip *,
+    .card .contact-btn,
+    .card .contact-btn *,
+    .card .action-btn,
+    .card .action-btn *,
+    .card .qr-caption,
+    .card .footer-code,
+    .card .status-line,
+    .card .sys-bar,
+    .card .sys-item {
+      font-family: 'FZ Jaapokki Enhance', sans-serif !important;
+      text-transform: uppercase !important;
     }
   </style>
 </head>
@@ -3668,21 +3725,6 @@
       <div class="terminal-line" style="color: var(--text-light);">[INFO] Đang xác nhận danh sách khách mời...</div>
       <div class="terminal-line" id="terminalStatusPrompt" style="color: var(--accent-cyan);">[READY] Vui lòng nhập tên
         để xác nhận tham dự.</div>
-
-      <!-- In-Terminal Confirmation Box (replaces window.confirm) -->
-      <div id="terminalConfirmBox"
-        style="display: none; margin: 8px 0; padding: 10px 12px; background: rgba(34, 211, 238, 0.08); border: 1px solid rgba(var(--accent-cyan-rgb), 0.35); border-radius: 8px;">
-        <div class="terminal-line" style="color: var(--accent-cyan); margin-bottom: 8px;">
-          [XÁC NHẬN] Gửi đăng ký tham dự với tên: <strong id="confirmGuestNameText"
-            style="color: #ffffff; text-decoration: underline;"></strong>?
-        </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <button class="terminal-btn" id="btnTerminalYes" onclick="handleConfirmChoice(true)">✓ [Y] Xác nhận
-            gửi</button>
-          <button class="terminal-btn secondary" id="btnTerminalNo" onclick="handleConfirmChoice(false)">✗ [N] Nhập
-            lại</button>
-        </div>
-      </div>
 
       <div class="terminal-input-row" id="terminalInputRow">
         <span class="terminal-prompt">Tên:</span>
@@ -4703,18 +4745,13 @@
     }
 
     // RSVP Terminal Actions
-    let pendingRSVPName = "";
-    let pendingRSVPWish = "";
+    let rsvpSubmitting = false;
     let editingTicketCode = null;
 
     function handleTerminalKey(event) {
       if (event.key === 'Enter') {
-        const confirmBox = document.getElementById('terminalConfirmBox');
-        if (confirmBox && confirmBox.style.display !== 'none') {
-          handleConfirmChoice(true);
-        } else {
-          submitRSVP();
-        }
+        event.preventDefault();
+        submitRSVP();
       } else {
         playBeep(1000 + Math.random() * 500, 0.03, 'triangle');
       }
@@ -4739,57 +4776,26 @@
         return;
       }
 
-      pendingRSVPName = guestName;
-      pendingRSVPWish = wish;
-      const inputRow = document.getElementById('terminalInputRow');
-      const wishPanel = document.getElementById('wishInputPanel');
-      const confirmBox = document.getElementById('terminalConfirmBox');
-      const confirmName = document.getElementById('confirmGuestNameText');
-
-      if (inputRow) inputRow.style.display = "none";
-      if (wishPanel) wishPanel.style.display = "none";
-      if (confirmName) {
-        confirmName.textContent = wish
-          ? `"${guestName}" · lời chúc: "${wish}"`
-          : `"${guestName}" · không có lời chúc`;
-      }
-      if (confirmBox) confirmBox.style.display = "block";
-      playBeep(850, 0.06, 'triangle');
-      const yesBtn = document.getElementById('btnTerminalYes');
-      if (yesBtn) yesBtn.focus();
-    }
-
-    function handleConfirmChoice(confirmed) {
-      const inputRow = document.getElementById('terminalInputRow');
-      const confirmBox = document.getElementById('terminalConfirmBox');
-      const input = document.getElementById('guestName');
-      const terminalBody = document.getElementById('terminalBody');
-
-      if (confirmBox) confirmBox.style.display = "none";
-
-      if (!confirmed) {
-        playBeep(240, 0.15, 'triangle');
-        if (inputRow) inputRow.style.display = "flex";
-        if (input) input.focus();
-        const cancelLine = document.createElement('div');
-        cancelLine.className = 'terminal-line';
-        cancelLine.style.color = 'var(--text-light)';
-        cancelLine.innerText = `[CANCELLED] Đã hủy. Vui lòng nhập lại tên của bạn.`;
-        if (inputRow) terminalBody.insertBefore(cancelLine, inputRow);
-        terminalBody.scrollTop = terminalBody.scrollHeight;
-        return;
-      }
-
-      executeRSVP(pendingRSVPName, pendingRSVPWish);
+      executeRSVP(guestName, wish);
     }
 
     function executeRSVP(guestName, wish = "") {
+      if (rsvpSubmitting) return;
+      rsvpSubmitting = true;
+
       const wasUpdating = !!sessionRSVP || !!editingTicketCode;
       const input = document.getElementById('guestName');
-      if (input) input.value = "";
+      const wishInput = document.getElementById('guestWish');
       const terminalBody = document.getElementById('terminalBody');
       const inputRow = document.getElementById('terminalInputRow');
+      const wishPanel = document.getElementById('wishInputPanel');
+      const submitButton = document.getElementById('btnTerminalSubmit');
       if (inputRow) inputRow.style.display = "none";
+      if (wishPanel) wishPanel.style.display = "none";
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Đang gửi...';
+      }
 
       const ticketTag = `IT26-${String(Math.floor(Math.random() * 90) + 10).padStart(4, '0')}`;
       const steps = [
@@ -4812,21 +4818,25 @@
           if (idx === steps.length - 1) {
             playBeep(880, 0.3, 'sine');
             const saveResult = await saveRSVPName(guestName, wish);
+            const ticketDisplay = document.getElementById('ticketStatusDisplay');
             invitationJSON.rsvp_status = saveResult.ok ? "CONFIRMED" : "FAILED";
             invitationJSON.guest = guestName;
             loadJSONCode();
 
-            const ticketDisplay = document.getElementById('ticketStatusDisplay');
             if (ticketDisplay) {
-              ticketDisplay.textContent = `CONFIRMED: ${guestName}`;
-              ticketDisplay.style.color = 'var(--accent-green)';
-            }
-            const ticketCodeEl = document.getElementById('ticketCodeDisplay');
-            if (ticketCodeEl) {
-              ticketCodeEl.textContent = `TICKET #${ticketTag}`;
+              ticketDisplay.textContent = saveResult.ok ? `CONFIRMED: ${guestName}` : 'NOT SAVED';
+              ticketDisplay.style.color = saveResult.ok ? 'var(--accent-green)' : '#fca5a5';
             }
 
             if (saveResult.ok) {
+              if (input) input.value = "";
+              if (wishInput) wishInput.value = "";
+              const wishCounter = document.getElementById('wishCounter');
+              if (wishCounter) wishCounter.textContent = '0/500';
+              const ticketCodeEl = document.getElementById('ticketCodeDisplay');
+              if (ticketCodeEl) {
+                ticketCodeEl.textContent = `TICKET #${ticketTag}`;
+              }
               saveConfirmedTicket(guestName, ticketTag);
               setRSVPComplete(true);
               const successLine = document.createElement('div');
@@ -4861,7 +4871,15 @@
               terminalBody.scrollTop = terminalBody.scrollHeight;
               showToast('❌ Chưa lưu được xác nhận, vui lòng thử lại.');
               if (inputRow) inputRow.style.display = "flex";
+              if (wishPanel) wishPanel.style.display = "block";
+              if (input) input.value = guestName;
+              if (wishInput) wishInput.value = wish;
             }
+            if (submitButton) {
+              submitButton.disabled = false;
+              submitButton.textContent = 'Xác nhận';
+            }
+            rsvpSubmitting = false;
           } else {
             playBeep(600 + idx * 80, 0.05, 'triangle');
           }

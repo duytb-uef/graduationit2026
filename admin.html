@@ -11,12 +11,20 @@
     href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Great+Vibes&family=Dancing+Script:wght@600;700&family=Be+Vietnam+Pro:wght@400;500;600&display=swap"
     rel="stylesheet">
   <style>
+    @font-face {
+      font-family: 'FZ Jaapokki Enhance';
+      src: url('assets/fonts/Fz-Jaapokki-Enchance.otf') format('opentype');
+      font-style: normal;
+      font-weight: 400 700;
+      font-display: swap;
+    }
+
     * {
       box-sizing: border-box;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      font-family: 'FZ Jaapokki Enhance', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       background:
         radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.14), transparent 45%),
         radial-gradient(circle at 85% 0%, rgba(168, 85, 247, 0.14), transparent 40%),
@@ -2261,6 +2269,26 @@
       font-size: .82rem;
       margin-bottom: 8px;
     }
+    /* Áp dụng FZ Jaapokki và chữ in hoa cho giao diện admin, không tác động album */
+    body,
+    body :not(.album-container):not(.album-container *):not(#albumView):not(#albumView *):not(.wish-details):not(.wish-details *) {
+      font-family: 'FZ Jaapokki Enhance', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
+      text-transform: uppercase !important;
+    }
+
+    /* Giữ nguyên kiểu chữ gốc của nội dung lời chúc do khách nhập */
+    /* Nội dung lời chúc bên ngoài album cũng dùng FZ Jaapokki và hiển thị in hoa */
+    body .container .table-wrap table tbody tr td .wish-details,
+    body .container .table-wrap table tbody tr td .wish-details summary,
+    body .container .table-wrap table tbody tr td .wish-details .wish-preview,
+    body .container .table-wrap table tbody tr td .wish-details .wish-full,
+    body .container .table-wrap table tbody tr td .wish-details * {
+      font-family: 'FZ Jaapokki Enhance', Arial, sans-serif !important;
+      text-transform: uppercase !important;
+      font-variant: normal !important;
+      font-feature-settings: normal !important;
+      font-variant-caps: normal !important;
+    }
   </style>
 </head>
 
@@ -2749,16 +2777,16 @@
       // Bìa và trang cuối dùng ảnh riêng: không chèn logo hoặc số trang lên hai trang này.
       if (!isCover) albumBrand(x);
       if (title) {
-        x.textAlign = 'center'; x.fillStyle = '#8a6412'; x.font = '700 48px "Fraunces", Georgia, serif'; x.fillText(title, 540, 205);
+        x.textAlign = 'center'; x.fillStyle = '#8a6412'; x.font = '700 48px "FZ Jaapokki Enhance", sans-serif'; x.fillText(String(title).toLocaleUpperCase('vi-VN'), 540, 205);
       }
       if (subtitle) {
-        x.fillStyle = '#8b7652'; x.font = '700 44px "Dancing Script", cursive'; x.fillText(subtitle, 540, 260, 960);
+        x.fillStyle = '#8b7652'; x.font = '700 44px "FZ Jaapokki Enhance", sans-serif'; x.fillText(String(subtitle).toLocaleUpperCase('vi-VN'), 540, 260, 960);
       }
       if (!isCover) {
         x.textAlign = 'left';
-        x.fillStyle = '#805b10'; x.font = '18px Arial'; x.textAlign = 'center';
+        x.fillStyle = '#805b10'; x.font = '18px "FZ Jaapokki Enhance", sans-serif'; x.textAlign = 'center';
         x.fillText('HUTECH · CLASS OF 2026', 540, 1284);
-        x.fillStyle = '#8a6412'; x.font = '16px Arial'; x.fillText('TRANG ' + pageNo + '/' + totalPages, 540, 1308);
+        x.fillStyle = '#8a6412'; x.font = '16px "FZ Jaapokki Enhance", sans-serif'; x.fillText(('TRANG ' + pageNo + '/' + totalPages).toLocaleUpperCase('vi-VN'), 540, 1308);
         x.textAlign = 'left';
       }
       return { canvas: c, ctx: x };
@@ -2790,12 +2818,12 @@
         const col = i % 2, row = Math.floor(i / 2), bx = left + col * (cardW + gap), by = top + row * (cardH + 20);
         x.fillStyle = '#fffdf7'; x.strokeStyle = '#dfc78e'; x.lineWidth = 2;
         x.beginPath(); x.roundRect(bx, by, cardW, cardH, 18); x.fill(); x.stroke();
-        x.fillStyle = '#9a7020'; x.font = '700 32px "Dancing Script", cursive'; albumWrap(x, g.name || 'Khách mời', bx + 24, by + 43, cardW - 48, 36, 1);
+        x.fillStyle = '#9a7020'; x.font = '700 32px "FZ Jaapokki Enhance", sans-serif'; albumWrap(x, String(g.name || 'Khách mời').toLocaleUpperCase('vi-VN'), bx + 24, by + 43, cardW - 48, 36, 1);
         x.strokeStyle = '#e7d8b4'; x.beginPath(); x.moveTo(bx + 24, by + 60); x.lineTo(bx + cardW - 24, by + 60); x.stroke();
         // Chuẩn hóa Unicode NFC để dấu tiếng Việt không bị tách/rơi khi vẽ bằng Canvas.
-        const wish = (String(g.wish || '').normalize('NFC').trim()) || 'Chưa có lời chúc được lưu.';
-        // Be Vietnam Pro được thiết kế cho tiếng Việt; tăng độ rõ của dấu khi render Canvas.
-        x.fillStyle = '#51432e'; x.font = '500 22px "Be Vietnam Pro", Arial, sans-serif';
+        const wish = ((String(g.wish || '').normalize('NFC').trim()) || 'Chưa có lời chúc được lưu.').toLocaleUpperCase('vi-VN');
+        // Album dùng FZ Jaapokki cho cả tên và nội dung lời chúc; chuẩn hóa Unicode NFC trước khi vẽ Canvas.
+        x.fillStyle = '#51432e'; x.font = '500 22px "FZ Jaapokki Enhance", sans-serif';
         const maxLines = Math.max(3, Math.floor((cardH - 112) / 33));
         albumWrap(x, wish, bx + 24, by + 99, cardW - 48, 33, maxLines);
         x.fillStyle = '#a77b19'; x.font = '17px Arial'; x.fillText('♥', bx + 24, by + cardH - 20);
@@ -2914,6 +2942,10 @@
       // Đợi font script tải xong trước khi vẽ Canvas để không bị rơi về font mặc định.
       if (document.fonts?.load) {
         await Promise.all([
+          document.fonts.load('700 48px "FZ Jaapokki Enhance"'),
+          document.fonts.load('700 44px "FZ Jaapokki Enhance"'),
+          document.fonts.load('700 32px "FZ Jaapokki Enhance"'),
+          document.fonts.load('500 22px "FZ Jaapokki Enhance"'),
           document.fonts.load('700 44px "Dancing Script"'),
           document.fonts.load('700 32px "Dancing Script"'),
           document.fonts.load('118px "Great Vibes"'),

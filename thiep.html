@@ -3315,10 +3315,17 @@
     }
 
     .card .corner-sash {
-      top: 38px;
-      right: -48px;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: max-content;
+      max-width: calc(100% - 24px);
+      transform: none;
+      margin: 0;
+      padding: 7px 10px;
       background: #ead39a;
       border-color: #b58a2b;
+      box-shadow: 0 3px 10px rgba(111, 78, 0, 0.12);
     }
 
     .card .corner-sash .school,
@@ -3357,8 +3364,15 @@
     }
 
     #secretTapZone {
+      gap: 0.45rem;
+      padding: 0.3rem 0.65rem;
+      border: 1px solid rgba(138, 100, 18, 0.28);
+      border-radius: 999px;
+      background: #fffaf0;
+      box-shadow: 0 2px 10px rgba(111, 78, 0, 0.1);
       text-transform: uppercase;
       font-size: calc(1em + 2px) !important;
+      white-space: nowrap;
     }
 
     .card .school-line {
@@ -3587,7 +3601,7 @@
                           <path
                             d="M6.62 10.79a15.91 15.91 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.24.2 2.45.57 3.57a1 1 0 0 1-.24 1.02l-2.2 2.2Z" />
                         </svg>
-                        <span>Gọi ngay</span>
+                        <span>Gọi</span>
                       </a>
                     </div>
                   </div>

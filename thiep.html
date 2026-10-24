@@ -87,6 +87,8 @@
     }
 
     .boot-line {
+      font-family: 'FZ Jaapokki Enhance', sans-serif;
+      text-transform: uppercase;
       font-size: 0.78rem;
       color: var(--accent-cyan);
       margin-bottom: 7px;
@@ -1191,9 +1193,11 @@
     }
 
     .formal-note p {
+      font-family: 'FZ Jaapokki Enhance', sans-serif;
       font-size: 0.9rem;
       line-height: 1.65;
       color: var(--text-light);
+      text-transform: uppercase;
     }
 
     .trace {
@@ -1911,13 +1915,22 @@
 
     .terminal-body {
       padding: 16px;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'FZ Jaapokki Enhance', sans-serif;
       font-size: 0.8rem;
       color: var(--text-primary);
+      text-transform: uppercase;
       min-height: 160px;
       display: flex;
       flex-direction: column;
       gap: 8px;
+    }
+
+    .terminal-body input,
+    .terminal-body textarea,
+    .terminal-body button,
+    .terminal-body .terminal-prompt {
+      font-family: 'FZ Jaapokki Enhance', sans-serif;
+      text-transform: uppercase;
     }
 
     .terminal-prompt {
@@ -2123,6 +2136,8 @@
 
     /* Audio notification popup */
     .toast {
+      font-family: 'FZ Jaapokki Enhance', sans-serif;
+      text-transform: uppercase;
       position: fixed;
       bottom: 24px;
       right: 24px;
@@ -2131,7 +2146,7 @@
       padding: 12px 20px;
       border-radius: 12px;
       color: #ffffff;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'FZ Jaapokki Enhance', sans-serif;
       font-size: 0.8rem;
       z-index: 100;
       box-shadow: var(--neon-glow);
@@ -2351,6 +2366,8 @@
     }
 
     .achv-panel {
+      font-family: 'FZ Jaapokki Enhance', sans-serif;
+      text-transform: uppercase;
       position: fixed;
       top: 68px;
       right: max(1rem, calc(50% - 240px));
@@ -2366,6 +2383,10 @@
       transform: translateY(-10px) scale(0.97);
       pointer-events: none;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .achv-panel * {
+      font-family: 'FZ Jaapokki Enhance', sans-serif !important;
     }
 
     .achv-panel.open {
@@ -3364,15 +3385,18 @@
     }
 
     #secretTapZone {
-      gap: 0.45rem;
-      padding: 0.3rem 0.65rem;
-      border: 1px solid rgba(138, 100, 18, 0.28);
-      border-radius: 999px;
-      background: #fffaf0;
-      box-shadow: 0 2px 10px rgba(111, 78, 0, 0.1);
+      position: relative;
+      justify-content: center;
+      gap: 0;
+      padding: 0.3rem 1.6rem;
       text-transform: uppercase;
       font-size: calc(1em + 2px) !important;
       white-space: nowrap;
+    }
+
+    #secretTapZone .dot {
+      position: absolute;
+      left: 0.7rem;
     }
 
     .card .school-line {
@@ -3536,9 +3560,7 @@
               </div>
 
               <div class="formal-note">
-                <p>Lễ tốt nghiệp chính thức bắt đầu lúc 07:30. Sau buổi lễ, Bảo Duy kính mời bạn đến chung vui
-                  và chụp ảnh lưu niệm từ 10:00 - 12:00, cùng chia sẻ cột mốc quan trọng trong hành trình trưởng thành.
-                </p>
+                <p class="formal-note-text">LỄ TỐT NGHIỆP CHÍNH THỨC BẮT ĐẦU LÚC 07:30. SAU BUỔI LỄ, BẢO DUY THÂN MỜI BẠN ĐẾN CHUNG VUI VÀ CHỤP ẢNH LƯU NIỆM TỪ 10:00 – 12:00, CÙNG DUY LƯU GIỮ NHỮNG KHOẢNH KHẮC THANH XUÂN ĐÁNG QUÝ, ĐÁNH DẤU MỘT CỘT MỐC TRƯỞNG THÀNH VÀ MỞ RA HÀNH TRÌNH MỚI ĐẦY HY VỌNG.</p>
               </div>
 
               <div class="trace">
@@ -3735,7 +3757,7 @@
       <div style="font-size: 0.65rem; color: var(--text-secondary);">tty1</div>
     </div>
     <div class="terminal-body" id="terminalBody">
-      <div class="terminal-line"><span class="terminal-prompt">visitor@baoduy-grad:~$</span> ./rsvp_sync.sh</div>
+      <div class="terminal-line" style="font-family: 'JetBrains Mono', monospace; text-transform: none;"><span class="terminal-prompt" style="font-family: 'JetBrains Mono', monospace; text-transform: none;">visitor@baoduy-grad:~$</span> ./rsvp_sync.sh</div>
       <div class="terminal-line" style="color: var(--text-light);">[INFO] Đang xác nhận danh sách khách mời...</div>
       <div class="terminal-line" id="terminalStatusPrompt" style="color: var(--accent-cyan);">[READY] Vui lòng nhập tên
         để xác nhận tham dự.</div>
@@ -3900,7 +3922,7 @@
           </div>
         </article>
         <div class="ticket-template-actions">
-          <button class="ticket-template-edit" type="button" onclick="reopenRSVPInput('${escapeTicketText(ticket.code)}')"> Đổi tên người tham dự</button>
+          <button class="ticket-template-edit" type="button" onclick="reopenRSVPInput('${escapeTicketText(ticket.code)}')"> Đổi tên</button>
           <button class="ticket-template-edit" type="button" onclick="downloadTicketCard(this, '${escapeTicketText(ticket.code)}')"> Lưu ảnh card</button>
           <button class="ticket-template-edit" type="button" onclick="showThankYouAgain()"> Lời cảm ơn</button>
         </div>

@@ -1490,10 +1490,62 @@
       font-family: 'FZ Jaapokki Enhance', 'Inter', sans-serif !important;
     }
 
+    /* Lời chào khách đã xác nhận — cố định góc dưới bên trái, tối ưu mobile */
+    .returning-guest-greeting {
+      position: fixed;
+      left: max(14px, env(safe-area-inset-left, 0px));
+      bottom: max(14px, env(safe-area-inset-bottom, 0px));
+      z-index: 80;
+      display: none;
+      align-items: flex-start;
+      gap: 9px;
+      width: min(340px, calc(100vw - 28px));
+      padding: 12px 15px;
+      border: 1px solid rgba(184, 134, 11, .48);
+      border-radius: 14px;
+      background: rgba(255, 253, 245, .94);
+      color: #8a6500;
+      box-shadow: 0 8px 28px rgba(105, 76, 0, .18);
+      backdrop-filter: blur(12px);
+      pointer-events: none;
+      animation: greetingArrive .55s ease both;
+    }
+    .returning-guest-greeting.is-visible { display: flex; }
+    .returning-guest-greeting .greeting-icon { font-size: 20px; line-height: 1.2; }
+    .returning-guest-greeting .greeting-title {
+      font-size: .82rem;
+      line-height: 1.45;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+    .returning-guest-greeting .greeting-subtitle {
+      margin-top: 3px;
+      font-size: .7rem;
+      line-height: 1.4;
+      color: #9a7b28;
+    }
+    @keyframes greetingArrive {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 480px) {
+      .returning-guest-greeting {
+        left: max(10px, env(safe-area-inset-left, 0px));
+        bottom: max(10px, env(safe-area-inset-bottom, 0px));
+        width: min(310px, calc(100vw - 20px));
+        padding: 10px 12px;
+      }
+      .returning-guest-greeting .greeting-title { font-size: .76rem; }
+      .returning-guest-greeting .greeting-subtitle { font-size: .66rem; }
+    }
   </style>
 </head>
 
 <body>
+  <div class="returning-guest-greeting" id="returningGuestGreeting" role="status" aria-live="polite">
+    <span class="greeting-icon" aria-hidden="true">✦</span>
+    <div><div class="greeting-title" id="returningGuestGreetingTitle"></div><div class="greeting-subtitle">Rất vui được đón bạn đến dự lễ tốt nghiệp 🎓</div></div>
+  </div>
   <div id="boot-bar" aria-hidden="true"></div>
   <div class="bg-canvas" aria-hidden="true"></div>
   <div class="beams" aria-hidden="true"></div>
@@ -1701,11 +1753,12 @@
     const mCtx = mCanvas.getContext('2d');
     function resizeMatrix() { mCanvas.width = innerWidth; mCanvas.height = innerHeight; }
     resizeMatrix(); addEventListener('resize', resizeMatrix);
-    const glyphs = '01アイウエオカキクケコ{}<>/;=+-*'.split('');
-    const fontSize = 15;
+    const glyphs = ['</>', '{ }', '#', ';', '01'];
+    const fontSize = window.innerWidth < 640 ? 12 : 15;
+    const matrixColumnGap = fontSize * 2.4;
     let mCols, drops;
     function initMatrix() {
-      mCols = Math.floor(mCanvas.width / fontSize);
+      mCols = Math.ceil(mCanvas.width / matrixColumnGap);
       drops = Array.from({ length: mCols }, () => Math.random() * -100);
     }
     initMatrix(); addEventListener('resize', initMatrix);
@@ -1724,7 +1777,7 @@
           for (let i = 0; i < mCols; i++) {
             const g = glyphs[Math.floor(Math.random() * glyphs.length)];
             mCtx.fillStyle = Math.random() > 0.94 ? '#8a6500' : '#c9971a';
-            mCtx.fillText(g, i * fontSize, drops[i] * fontSize);
+            mCtx.fillText(g, i * matrixColumnGap, drops[i] * fontSize);
             if (drops[i] * fontSize > mCanvas.height && Math.random() > 0.975) drops[i] = 0;
             drops[i]++;
           }
@@ -1870,6 +1923,22 @@
         window.location.href = 'thiep.html';
       }, prefersReducedMotion ? 0 : 1700);
     }
+
+    // Chào khách đã xác nhận trên thiệp; tên được lưu bởi thiep.html trong localStorage.
+    (function showReturningGuestGreeting() {
+      const greeting = document.getElementById('returningGuestGreeting');
+      const greetingTitle = document.getElementById('returningGuestGreetingTitle');
+      try {
+        const name = (localStorage.getItem('thiepmoi_rsvp_name') || '').trim();
+        const status = localStorage.getItem('thiepmoi_rsvp_status') || '';
+        if (!name || !['CONFIRMED', 'CONFIRMED_LOCAL'].includes(status)) return;
+        greetingTitle.textContent = 'XIN CHÀO, ' + name.toLocaleUpperCase('vi-VN') + '!';
+        greeting.classList.add('is-visible');
+      } catch (error) {
+        // Nếu trình duyệt chặn localStorage, không làm ảnh hưởng trang chính.
+        console.warn('Không thể hiển thị lời chào khách quay lại:', error);
+      }
+    })();
 
     document.getElementById('openBtn').addEventListener('click', openInvitation);
 

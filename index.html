@@ -1305,6 +1305,7 @@
       color: #8a6500;
       opacity: 1;
       font-weight: 700;
+      font-size: 11px;
     }
 
     .eyebrow,
@@ -1317,6 +1318,7 @@
 
     .eyebrow {
       color: #8a6500;
+      font-size: 12px;
     }
 
     .meta-chip {
@@ -1529,6 +1531,34 @@
       to { opacity: 1; transform: translateY(0); }
     }
     @media (max-width: 480px) {
+      /* Giữ nội dung vừa màn hình nhỏ, tránh tràn ngang ở điện thoại 320px */
+      .content {
+        width: 100%;
+        max-width: 520px;
+        padding: 1.5rem 1rem;
+      }
+      .eyebrow {
+        max-width: 100%;
+        white-space: normal;
+        justify-content: center;
+        line-height: 1.35;
+        letter-spacing: .08em;
+        padding: 8px 10px;
+      }
+      /* Trên mobile, xếp nón và tiêu đề thành hai hàng riêng, cùng trục giữa */
+      .logo-wrap {
+        display: block;
+        width: max-content;
+        margin: 0 auto 1.4rem;
+      }
+      .content h1 {
+        display: block;
+        width: 100%;
+        white-space: normal;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+      }
       .returning-guest-greeting {
         left: max(10px, env(safe-area-inset-left, 0px));
         bottom: max(10px, env(safe-area-inset-bottom, 0px));
@@ -1579,6 +1609,8 @@
   <div class="content">
     <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Đại học Công nghệ TP.HCM · HUTECH </div>
 
+    <div class="mini-label">KHOA CÔNG NGHỆ THÔNG TIN</div>
+
     <div class="logo-wrap">
       <div class="logo-ring orbit">
         <div class="orbit-dot"></div>
@@ -1587,8 +1619,6 @@
       <div class="logo-ring"></div>
       <div class="logo">🎓</div>
     </div>
-
-    <div class="mini-label">KHOA CÔNG NGHỆ THÔNG TIN</div>
     <h1 id="titleGlitch" data-text="Thiệp Mời Tốt Nghiệp">Thiệp Mời Tốt Nghiệp</h1>
     <div class="holo-line"></div>
 

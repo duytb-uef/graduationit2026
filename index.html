@@ -1559,6 +1559,11 @@
         margin-left: auto;
         margin-right: auto;
       }
+      /* Tắt các lớp nền nặng trên điện thoại, giữ nguyên bố cục và chức năng. */
+      #matrix-canvas { display: none !important; }
+      .aurora { display: none !important; }
+      .beams { opacity: .25; }
+      .content, .btn-wrap { will-change: auto; }
       .returning-guest-greeting {
         left: max(10px, env(safe-area-inset-left, 0px));
         bottom: max(10px, env(safe-area-inset-bottom, 0px));
@@ -1667,19 +1672,27 @@
     if (isFinePointer) {
       let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
       let followerX = mouseX, followerY = mouseY;
+      let followerRunning = false;
 
       document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX; mouseY = e.clientY;
         cursor.style.left = mouseX + 'px'; cursor.style.top = mouseY + 'px';
+        if (!followerRunning) {
+          followerRunning = true;
+          requestAnimationFrame(animateFollower);
+        }
       });
 
       function animateFollower() {
         followerX += (mouseX - followerX) * 0.15;
         followerY += (mouseY - followerY) * 0.15;
         follower.style.left = followerX + 'px'; follower.style.top = followerY + 'px';
-        requestAnimationFrame(animateFollower);
+        if (Math.abs(mouseX - followerX) > 0.5 || Math.abs(mouseY - followerY) > 0.5) {
+          requestAnimationFrame(animateFollower);
+        } else {
+          followerRunning = false;
+        }
       }
-      animateFollower();
 
       const btn = document.getElementById('openBtn');
       btn.addEventListener('mouseenter', () => { cursor.style.width = '28px'; cursor.style.height = '28px'; });
@@ -1725,6 +1738,7 @@
       const btnWrap = document.querySelector('.btn-wrap');
       let tx = 0, ty = 0, ctx2 = 0, cty = 0;
       let bx = 0, by = 0, cbx = 0, cby = 0;
+      let rafRunning = false;
 
       document.addEventListener('mousemove', (e) => {
         const nx = (e.clientX / innerWidth - 0.5) * 2;
@@ -1737,6 +1751,10 @@
         const dist = Math.hypot(dx, dy);
         if (dist < 140) { bx = (dx / dist) * 8 * (1 - dist / 140); by = (dy / dist) * 8 * (1 - dist / 140); }
         else { bx = 0; by = 0; }
+        if (!rafRunning) {
+          rafRunning = true;
+          requestAnimationFrame(raf);
+        }
       });
 
       function raf() {
@@ -1744,14 +1762,15 @@
         contentEl.style.transform = `perspective(900px) rotateX(${cty}deg) rotateY(${ctx2}deg)`;
         cbx += (bx - cbx) * 0.15; cby += (by - cby) * 0.15;
         btnWrap.style.transform = `translate(${cbx}px, ${cby}px)`;
-        requestAnimationFrame(raf);
+        const settling = Math.abs(tx - ctx2) > 0.02 || Math.abs(ty - cty) > 0.02 || Math.abs(bx - cbx) > 0.02 || Math.abs(by - cby) > 0.02;
+        if (settling) requestAnimationFrame(raf);
+        else rafRunning = false;
       }
-      raf();
     }
 
     const isSmallScreen = window.innerWidth < 640;
-    const particleCount = isSmallScreen ? 22 : 42;
-    const sparkleCount = isSmallScreen ? 32 : 60;
+    // Ít hạt nền hơn để giảm animation và chi phí render.
+    const particleCount = isSmallScreen ? 8 : 18;
 
     const container = document.getElementById('particles');
     const colors = ['#d4af37', '#f0d264', '#b8860b', '#e8cf7a', '#f5e3a0'];
@@ -1768,55 +1787,9 @@
       container.appendChild(p);
     }
 
-    const sparkleField = document.getElementById('sparkles');
-    for (let i = 0; i < sparkleCount; i++) {
-      const s = document.createElement('div');
-      s.className = 'sparkle';
-      s.style.left = Math.random() * 100 + '%';
-      s.style.top = Math.random() * 100 + '%';
-      s.style.animationDuration = (2 + Math.random() * 3) + 's';
-      s.style.animationDelay = (Math.random() * 4) + 's';
-      sparkleField.appendChild(s);
-    }
+    // Sparkles được khởi tạo một lần ở phần cuối; tránh tạo trùng hạt nền.
 
-    const mCanvas = document.getElementById('matrix-canvas');
-    const mCtx = mCanvas.getContext('2d');
-    function resizeMatrix() { mCanvas.width = innerWidth; mCanvas.height = innerHeight; }
-    resizeMatrix(); addEventListener('resize', resizeMatrix);
-    const glyphs = ['</>', '{ }', '#', ';', '01'];
-    const fontSize = window.innerWidth < 640 ? 12 : 15;
-    const matrixColumnGap = fontSize * 2.4;
-    let mCols, drops;
-    function initMatrix() {
-      mCols = Math.ceil(mCanvas.width / matrixColumnGap);
-      drops = Array.from({ length: mCols }, () => Math.random() * -100);
-    }
-    initMatrix(); addEventListener('resize', initMatrix);
-    let matrixLastTs = 0;
-    let matrixPaused = document.hidden;
-    const MATRIX_FRAME_MS = 1000 / 24;
-    function drawMatrix(ts) {
-      if (!matrixPaused) {
-        if (!matrixLastTs || ts - matrixLastTs >= MATRIX_FRAME_MS) {
-          matrixLastTs = ts;
-          mCtx.globalCompositeOperation = 'destination-out';
-          mCtx.fillStyle = 'rgba(0,0,0,0.07)';
-          mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height);
-          mCtx.globalCompositeOperation = 'source-over';
-          mCtx.font = fontSize + 'px monospace';
-          for (let i = 0; i < mCols; i++) {
-            const g = glyphs[Math.floor(Math.random() * glyphs.length)];
-            mCtx.fillStyle = Math.random() > 0.94 ? '#8a6500' : '#c9971a';
-            mCtx.fillText(g, i * matrixColumnGap, drops[i] * fontSize);
-            if (drops[i] * fontSize > mCanvas.height && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
-          }
-        }
-      }
-      requestAnimationFrame(drawMatrix);
-    }
-    if (!prefersReducedMotion) requestAnimationFrame(drawMatrix);
-    document.addEventListener('visibilitychange', () => { matrixPaused = document.hidden; });
+    // Matrix Rain đã được tắt: hiệu ứng canvas chạy liên tục không cần thiết cho thiệp.
 
     const subHTML = 'Lễ tốt nghiệp Kỹ sư <span>CNTT</span> — <a class="name-link" href="https://tranbaoduy.netlify.app/" target="_self">Trần Bảo Duy</a><br><span>11/2026</span>';
     const subEl = document.getElementById('typedSub');
@@ -1975,7 +1948,7 @@
     // Rebuild sparkles as gold stars + bigger particles
     (function () {
       const sf = document.getElementById('sparkles'); sf.innerHTML = '';
-      const n = window.innerWidth < 640 ? 24 : 44;
+      const n = window.innerWidth < 640 ? 12 : 22;
       for (let i = 0; i < n; i++) {
         const s = document.createElement('div'); s.className = 'sparkle'; s.textContent = '✦';
         s.style.left = Math.random() * 100 + '%'; s.style.top = Math.random() * 100 + '%';

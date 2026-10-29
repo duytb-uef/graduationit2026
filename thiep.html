@@ -5,6 +5,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thiệp Mời Tốt Nghiệp — Trần Bảo Duy</title>
+  <script>
+    // Trên điện thoại, bảo đảm nút Back đưa khách về trang index.
+    history.pushState({ thiepBackGuard: true }, "", location.href);
+    window.addEventListener("popstate", () => {
+      location.replace("index.html");
+    });
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link

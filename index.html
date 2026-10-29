@@ -1971,6 +1971,17 @@
       }
     })();
 
+    // Khôi phục trang chủ khi người dùng bấm Back trên điện thoại (Safari có thể giữ trang trong BFCache).
+    window.addEventListener('pageshow', () => {
+      const content = document.querySelector('.content');
+      const openBtn = document.getElementById('openBtn');
+      const envelope = document.getElementById('envelopeTransition');
+      if (content) content.classList.remove('is-opening');
+      if (openBtn) openBtn.disabled = false;
+      if (envelope) envelope.classList.remove('is-active');
+      document.querySelectorAll('.launch-burst').forEach(node => node.remove());
+    });
+
     document.getElementById('openBtn').addEventListener('click', openInvitation);
 
     // Rebuild sparkles as gold stars + bigger particles
